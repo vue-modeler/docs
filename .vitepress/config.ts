@@ -76,9 +76,10 @@ export default defineConfig({
             {
               text: 'Advanced',
               items: [
-                { text: 'Argument Validation', link: '/advanced/args-validation' },
                 { text: 'Testing', link: '/advanced/testing' },
                 { text: 'Working with SSR', link: '/advanced/ssr' },
+                { text: 'Predefined Hooks', link: '/advanced/predefined-hooks' },
+                { text: 'Argument Validation', link: '/advanced/args-validation' },
               ]
             },
           ],
@@ -145,9 +146,10 @@ export default defineConfig({
             {
               text: 'Продвинутые темы',
               items: [
-                { text: 'Валидация аргументов', link: '/ru/advanced/args-validation' },
                 { text: 'Тестирование', link: '/ru/advanced/testing' },
                 { text: 'Работа с SSR', link: '/ru/advanced/ssr' },
+                { text: 'Встроенные хуки', link: '/ru/advanced/predefined-hooks' },
+                { text: 'Валидация аргументов', link: '/ru/advanced/args-validation' },
               ]
             },
           ],

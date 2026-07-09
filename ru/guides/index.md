@@ -5,7 +5,7 @@ description: Управление зависимостями и жизненны
 
 
 
-**[@vue-modeler/dc](https://www.npmjs.com/package/@vue-modeler/dc)** — это контейнер зависимостей на основе [shared composable](https://github.com/vuejs/rfcs/blob/master/active-rfcs/0041-reactivity-effect-scope.md#example-a-shared-composable).
+**[@vue-modeler/di](https://www.npmjs.com/package/@vue-modeler/di)** — это контейнер зависимостей на основе [shared composable](https://github.com/vuejs/rfcs/blob/master/active-rfcs/0041-reactivity-effect-scope.md#example-a-shared-composable).
 
 Контейнер решает проблему управления жизненным циклом моделей и сервисов:
 
@@ -38,12 +38,12 @@ description: Управление зависимостями и жизненны
 
 `provider` регистрирует фабрику зависимости и создает shared composable, который будет использоваться в компонентах.
 
-Фабрика — простая функция, которая может возвращать значение любого типа.
+Фабрика — простая функция, которая может возвращать любое синхронное значение, кроме `null`, `undefined` или `Promise` (см. [Фабрики должны быть синхронными](#фабрики-должны-быть-синхронными)).
 
 Контейнер хранит то, что вернула фабрика. Никаких дополнительных действий не производит. Зависимости не внедряет.
 
 ```typescript
-import { provider } from '@vue-modeler/dc';
+import { provider } from '@vue-modeler/di';
 
 const useDependency = provider(() => {
   // ваша фабрика по созданию экземпляра
@@ -121,3 +121,52 @@ const usePersistentService = provider(
 :::
 
 Для SSR постоянные экземпляры безопасны, так как при каждом запросе создается новый экземпляр контейнера, а старый удаляется вместе с содержимым.
+
+## Доступ к контейнеру внутри фабрики
+
+Фабрика получает объект, в свойстве `dc` которого лежит активный контейнер. Используйте его, когда экземпляру нужно разрешать другие зависимости во время выполнения (вне `setup`):
+
+```typescript
+import { provider, type DependencyContainer } from '@vue-modeler/di';
+
+const useApi = provider(({ dc }) => new ApiClient(dc));
+```
+
+`dc` — это публичный `DependencyContainer`. Вложенные провайдеры, вызванные синхронно внутри фабрики, автоматически наследуют тот же контейнер.
+
+## Разрешение зависимостей вне setup
+
+`useDependency()` можно вызывать только синхронно в `setup` компонента или внутри фабрики другого провайдера. Для кода времени выполнения — обработчиков событий, `watch`, кода после `await`, тестов или SSR — разрешайте зависимость через ссылку на контейнер:
+
+```typescript
+const model = dc.resolve(useDependency);
+```
+
+`resolve()` возвращает (или создает) экземпляр в этом контейнере. В отличие от `useDependency()` в `setup`, он не привязывает экземпляр к области видимости Vue, поэтому экземпляр живёт столько же, сколько и контейнер.
+
+## Переопределение фабрики
+
+У каждого провайдера есть метод `redefine(factory)`, который подменяет фабрику до первого разрешения — удобно для тестов и SSR-моков. Замена получает тот же аргумент `{ dc }` плюс `prevFactory`, поэтому можно обернуть предыдущую реализацию:
+
+```typescript
+const useService = provider(({ dc }) => new RealService(dc));
+
+useService.redefine(({ dc, prevFactory }) => {
+  const previous = prevFactory?.({ dc });
+  return new MockService(previous);
+});
+```
+
+Переопределение после того, как экземпляр уже создан в целевом контейнере, выбросит ошибку `Provider was redefined after instance creation`. Разрешайте моки из отдельного контейнера, чтобы держать их изолированными.
+
+## Фабрики должны быть синхронными
+
+Фабрика должна отрабатывать синхронно и возвращать экземпляр напрямую — никогда не `Promise`. `async`-фабрики, `await` в теле фабрики или возврат `Promise` не поддерживаются и выбрасывают ошибку при регистрации. Асинхронную работу выполняйте на созданном экземпляре, а не в фабрике.
+
+```typescript
+// Так нельзя
+const useModel = provider(async ({ dc }) => new MyModel(dc));
+
+// Правильно — асинхронная работа живёт на экземпляре
+const useModel = provider(({ dc }) => new MyModel(dc));
+```

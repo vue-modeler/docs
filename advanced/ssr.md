@@ -4,6 +4,10 @@ description: Server-Side Rendering with the dependency container
 outline: deep
 ---
 
+::: tip
+The container ships a ready `SsrStateService` through the [`useSsrState`](/advanced/predefined-hooks#usessrstate) hook, including a full isomorphic model example.
+:::
+
 [@vue-modeler/model](https://www.npmjs.com/package/@vue-modeler/model) has no built-in state store. You are responsible for serializing and deserializing state.
 
 Implementation depends on your stack. The idea:
@@ -26,4 +30,4 @@ Define an isomorphic model that uses an `SsrStateService` with `extractState(key
 
 In the component, use `onServerPrefetch` to wait for e.g. `model.init.promise` so the server waits for data before rendering.
 
-Hydration depends on your setup. If using [@vue-modeler/dc](https://www.npmjs.com/package/@vue-modeler/dc), you might get the SSR state service from the container and call `injectState(ctx.state)` so state is written to a global that the client can read.
+Hydration depends on your setup. If using [@vue-modeler/di](https://www.npmjs.com/package/@vue-modeler/di), you might get the SSR state service from the container and call `injectState(ctx.state)` so state is written to a global that the client can read.

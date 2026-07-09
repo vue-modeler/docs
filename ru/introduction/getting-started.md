@@ -103,8 +103,8 @@ export const apiService = {
 Провайдер модели это функция, которая создает модель при первом вызове, а при последующих возвращает готовый экземпляр. Подробнее здесь.
 
 ```typescript
-// getting-started/dc.ts
-import { provider } from '@vue-modeler/dc'
+// getting-started/di.ts
+import { provider } from '@vue-modeler/di'
 import { Counter } from './counter'
 import { apiService } from './api-service'
 
@@ -121,7 +121,7 @@ export const useCounter = provider(() => Counter.model(apiService))
 // getting-started/app-counter.vue
 
 <script setup lang="ts">
-import { useCounter } from './dc'
+import { useCounter } from './di'
 
 const counter = useCounter()
 

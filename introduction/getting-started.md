@@ -103,8 +103,8 @@ To use the model in a component, register it in the dependency container. The `p
 The provider creates the model on first use and returns the same instance on later calls. More [here](/guides/).
 
 ```typescript
-// getting-started/dc.ts
-import { provider } from '@vue-modeler/dc'
+// getting-started/di.ts
+import { provider } from '@vue-modeler/di'
 import { Counter } from './counter'
 import { apiService } from './api-service'
 
@@ -121,7 +121,7 @@ The component stays minimal and only handles display. All business logic is in t
 // getting-started/app-counter.vue
 
 <script setup lang="ts">
-import { useCounter } from './dc'
+import { useCounter } from './di'
 
 const counter = useCounter()
 
