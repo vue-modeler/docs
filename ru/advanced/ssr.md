@@ -5,7 +5,7 @@ outline: deep
 ---
 
 ::: tip
-Контейнер предоставляет готовый `SsrStateService` через хук [`useSsrState`](/ru/advanced/predefined-hooks#usessrstate), включая полный пример изоморфной модели.
+[@vue-modeler/di](https://www.npmjs.com/package/@vue-modeler/di) предоставляет готовый `SsrStateService` через хук [`useSsrState`](/ru/advanced/predefined-hooks#usessrstate), включая полный пример изоморфной модели.
 :::
 
 [@vue-modeler/model](https://www.npmjs.com/package/@vue-modeler/model) не имеет отдельного хранилища состояния. Разработчик модели отвечает за процесс сериализации и десериализации состояния.

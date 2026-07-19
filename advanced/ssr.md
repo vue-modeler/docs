@@ -5,7 +5,7 @@ outline: deep
 ---
 
 ::: tip
-The container ships a ready `SsrStateService` through the [`useSsrState`](/advanced/predefined-hooks#usessrstate) hook, including a full isomorphic model example.
+[@vue-modeler/di](https://www.npmjs.com/package/@vue-modeler/di) ships a ready `SsrStateService` through the [`useSsrState`](/advanced/predefined-hooks#usessrstate) hook, including a full isomorphic model example.
 :::
 
 [@vue-modeler/model](https://www.npmjs.com/package/@vue-modeler/model) has no built-in state store. You are responsible for serializing and deserializing state.

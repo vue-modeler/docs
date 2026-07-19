@@ -14,6 +14,11 @@ hero:
     - theme: alt
       text: GitHub
       link: https://github.com/vue-modeler
+    - theme: sponsor
+      text: Поддержать
+      link: https://www.donationalerts.com/r/avbratko
+      target: _blank
+      rel: noopener noreferrer
 
 features:
   - icon: 📦

@@ -10,6 +10,7 @@ The container solves the problem of managing model and service lifecycle:
 - Simplifies sharing models and services across components
 - Separates business logic from presentation
 - Enables MVVM, DDD, SOLID principles
+- Can be used as a [service locator](#resolving-outside-setup) via `dc.resolve()` outside `setup`
 
 ## Main features
 
@@ -17,6 +18,7 @@ The container solves the problem of managing model and service lifecycle:
 - 🗑️ **Auto cleanup**: removes unused dependencies
 - 🔧 **Destructor support**: calls `destructor` on cleanup
 - 💾 **Persistent instances**: for long-lived services
+- 🧭 **Service locator**: resolve dependencies at runtime through the container
 
 ::: tip
 The dependency container stores dependencies but does NOT support autowire. You wire dependencies in your own module or layer.

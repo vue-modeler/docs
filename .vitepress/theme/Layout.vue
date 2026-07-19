@@ -25,7 +25,7 @@ const isRu = () => lang.value === 'ru'
               <code>@vue-modeler/model</code>
             </a>
             <span>
-              {{ isRu() ? 'Библиотека для создания моделей - реактивных объектов с состоянием' : 'Library for fast model creation with reactive state, actions, errors, and lifecycle' }}
+              {{ isRu() ? 'Для создания моделей — реактивных объектов с состоянием' : 'Fast model creation with reactive state, actions, errors, and lifecycle' }}
             </span>
           </div>
           <div class="lib">
@@ -33,7 +33,7 @@ const isRu = () => lang.value === 'ru'
               <code>@vue-modeler/di</code>
             </a>
             <span>
-              {{ isRu() ? 'Библиотека для управления зависимостями (создание, получение, удаление)' : 'Library for dependency management (create, resolve, destroy)' }}
+              {{ isRu() ? 'Управление зависимостями: создание, получение, удаление' : 'Dependency management: create, resolve, destroy' }}
             </span>
           </div>
         </div>
