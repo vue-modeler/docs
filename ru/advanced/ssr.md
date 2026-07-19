@@ -4,6 +4,10 @@ description: Server-Side Rendering с контейнером зависимос�
 outline: deep
 ---
 
+::: tip
+[@vue-modeler/di](https://www.npmjs.com/package/@vue-modeler/di) предоставляет готовый `SsrStateService` через хук [`useSsrState`](/ru/advanced/predefined-hooks#usessrstate), включая полный пример изоморфной модели.
+:::
+
 [@vue-modeler/model](https://www.npmjs.com/package/@vue-modeler/model) не имеет отдельного хранилища состояния. Разработчик модели отвечает за процесс сериализации и десериализации состояния.
 
 Реализация зависит от инфраструктуры, поэтому каждый может сделать это по-своему. Общая идея такая:
@@ -103,11 +107,11 @@ onServerPrefetch(async () => model.init.promise)
 
 Реализация гидрации зависит от инфраструктуры.
 
-Допустим мы используем [@vue-modeler/dc](https://www.npmjs.com/package/@vue-modeler/dc), поэтому это может выглядеть так.
+Допустим мы используем [@vue-modeler/di](https://www.npmjs.com/package/@vue-modeler/di), поэтому это может выглядеть так.
 
 ```typescript
 // На сервере
-import { useSsrState } from '@vue-modeler/dc';
+import { useSsrState } from '@vue-modeler/di';
 
 function ssrHydration(ctx: Context): void {
   // извлекает сервис из контейнера 

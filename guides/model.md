@@ -85,7 +85,7 @@ export class Counter extends ProtoModel {
 
 ## Destroying the model
 
-All models have `destructor` (defined on `ProtoModel`). It removes all effects and the EffectScope. Call it when the model is no longer needed. If you use [@vue-modeler/dc](https://www.npmjs.com/package/@vue-modeler/dc), the container will call `destructor` and remove the model when it is unused.
+All models have `destructor` (defined on `ProtoModel`). It removes all effects and the EffectScope. Call it when the model is no longer needed. If you use [@vue-modeler/di](https://www.npmjs.com/package/@vue-modeler/di), the container will call `destructor` and remove the model when it is unused.
 
 Override `destructor` if you need extra cleanup.
 

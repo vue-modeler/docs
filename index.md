@@ -3,8 +3,8 @@ layout: home
 
 hero:
   name: "Vue Modeler"
-  text: "OOP for state management in Vue"
-  tagline: "No store — no problem. Less code - faster development"
+  text: "State management without the pain"
+  tagline: "Built on OOP. Less code. More control — no store."
   image:
     src: /logo.webp
   actions:

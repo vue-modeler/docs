@@ -3,13 +3,14 @@ title: Dependency Container
 description: Managing dependencies and object lifecycle in Vue applications
 ---
 
-**[@vue-modeler/dc](https://www.npmjs.com/package/@vue-modeler/dc)** is a dependency container based on [shared composable](https://github.com/vuejs/rfcs/blob/master/active-rfcs/0041-reactivity-effect-scope.md#example-a-shared-composable).
+**[@vue-modeler/di](https://www.npmjs.com/package/@vue-modeler/di)** is a dependency container based on [shared composable](https://github.com/vuejs/rfcs/blob/master/active-rfcs/0041-reactivity-effect-scope.md#example-a-shared-composable).
 
 The container solves the problem of managing model and service lifecycle:
 
 - Simplifies sharing models and services across components
 - Separates business logic from presentation
 - Enables MVVM, DDD, SOLID principles
+- Can be used as a [service locator](#resolving-outside-setup) via `dc.resolve()` outside `setup`
 
 ## Main features
 
@@ -17,6 +18,7 @@ The container solves the problem of managing model and service lifecycle:
 - 🗑️ **Auto cleanup**: removes unused dependencies
 - 🔧 **Destructor support**: calls `destructor` on cleanup
 - 💾 **Persistent instances**: for long-lived services
+- 🧭 **Service locator**: resolve dependencies at runtime through the container
 
 ::: tip
 The dependency container stores dependencies but does NOT support autowire. You wire dependencies in your own module or layer.
@@ -36,12 +38,12 @@ The container follows "create on demand, remove when unused":
 
 `provider` registers a dependency factory and creates a shared composable for use in components.
 
-The factory is a simple function that can return any value.
+The factory is a simple function that can return any synchronous value, except `null`, `undefined`, or a `Promise` (see [Factories must be synchronous](#factories-must-be-synchronous)).
 
 The container stores whatever the factory returns. It does nothing else and does not inject dependencies.
 
 ```typescript
-import { provider } from '@vue-modeler/dc';
+import { provider } from '@vue-modeler/di';
 
 const useDependency = provider(() => {
   // your instance factory
@@ -57,7 +59,7 @@ const useNumber = provider(() => 10);
 const useTrue = provider(() => true);
 
 // pass dependencies into the constructor
-const useObject = provider(() => new SomeModel(
+const useSomeModel = provider(() => new SomeModel(
   useDependency(),
   useSymbol(),
   useNumber(),
@@ -77,7 +79,7 @@ Example of using a provider in a component template:
 <script setup lang="ts">
 import { useDependency } from '@/providers/myDependency';
 
-const model = useObject(); // get the instance
+const model = useDependency(); // get the instance
 </script>
 ```
 
@@ -118,3 +120,52 @@ On the client, use persistent instances with care — they are not removed autom
 :::
 
 For SSR, persistent instances are safe: each request gets a new container instance, and the previous one is discarded with its contents.
+
+## Accessing the container in a factory
+
+The factory receives an object whose `dc` property is the active container. Use it when an instance needs to resolve other dependencies at runtime (outside `setup`):
+
+```typescript
+import { provider, type DependencyContainer } from '@vue-modeler/di';
+
+const useApi = provider(({ dc }) => new ApiClient(dc));
+```
+
+`dc` is the public `DependencyContainer`. Nested providers called synchronously inside the factory inherit the same container automatically.
+
+## Resolving outside setup
+
+`useDependency()` may only be called synchronously in a component `setup` or inside another provider factory. For runtime code — event handlers, router hooks, `watch`, code after `await`, tests, or SSR — resolve through a container reference instead:
+
+```typescript
+const model = dc.resolve(useDependency);
+```
+
+`resolve()` returns (or creates) the instance in that container. Unlike `useDependency()` in `setup`, it does not bind the instance to a Vue scope, so the instance lives as long as the container.
+
+## Redefining a factory
+
+Each provider exposes `redefine(factory)` to swap the factory before the first resolve — useful for tests and SSR mocks. The replacement receives the same `{ dc }` argument plus `prevFactory`, so you can wrap the previous implementation:
+
+```typescript
+const useService = provider(({ dc }) => new RealService(dc));
+
+useService.redefine(({ dc, prevFactory }) => {
+  const previous = prevFactory?.({ dc });
+  return new MockService(previous);
+});
+```
+
+Redefining after an instance already exists in the target container throws `Provider was redefined after instance creation`. Resolve mocks from a dedicated container to keep them isolated.
+
+## Factories must be synchronous
+
+A factory must run to completion synchronously and return the instance directly — never a `Promise`. `async` factories, `await` in the factory body, or returning a `Promise` are not supported and throw on registration. Do async work on the created instance, not in the factory.
+
+```typescript
+// Not allowed
+const useModel = provider(async ({ dc }) => new MyModel(dc));
+
+// OK — async work lives on the instance
+const useModel = provider(({ dc }) => new MyModel(dc));
+```

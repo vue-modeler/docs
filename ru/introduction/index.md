@@ -6,7 +6,7 @@ outline: deep
 
 **Vue Modeler** — комплексное решение для управления состоянием в Vue.js приложениях, состоящее из двух взаимодополняющих библиотек:
 
-- **[@vue-modeler/dc](https://www.npmjs.com/package/@vue-modeler/dc)** — контейнер зависимостей.
+- **[@vue-modeler/di](https://www.npmjs.com/package/@vue-modeler/di)** — контейнер зависимостей.
 - **[@vue-modeler/model](https://www.npmjs.com/package/@vue-modeler/model)** — библиотека для создания моделей (реактивных объектов с состоянием)
 
 ## Ключевые концепции
